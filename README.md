@@ -1,6 +1,7 @@
 # Lyapunov based Spacecraft Attitude control
 
-![[Pasted image 20260616141322.png|669]]
+<img width="1325" height="744" alt="image" src="https://github.com/user-attachments/assets/02164e52-4778-4d52-8d9a-78e7ddde1de9" />
+
 *The rates and attitude error (relative to reference body) going to 0, and the value of the Lyapunov function approach 0*
 ## 1. Overview
 This project implements Lyapunov based control methods for spacecraft attitude tracking and stabilisation. It controls the rates (angular velocity) and the attitude, represented using MRPs and brings them to both to 0 relative to another coordinate frame depending upon the application. The entire flow has been made in MATLAB.
@@ -40,46 +41,23 @@ $$ V(\omega, \sigma) = \frac{1}{2}\omega^T [I] \omega + 2K ln (1 + 2 \sigma^T \s
 here, $\omega$ and $\sigma$ and both 3x1 column vector, $[I]$ is the inertia tensor (symmetric) and K is a linear gain (for the feedback attitude control term)
 
 then taking the derivative of this, we get;
-$$ 
-\dot{V} (\omega, \sigma)  = \omega^T([I] \dot{\omega} + K\sigma)$$
-for stable control, we want this to be semidefinite. Set the Lyapunov rate to be equal to $$  
-\dot{V}  
-=  
--\omega^T[P]\omega  
-$$where $[P]$ is a symmetric positive-definite matrix.    
+$$\dot{V} (\omega, \sigma)  = \omega^T([I] \dot{\omega} + K\sigma) $$ for stable control, we want this to be semidefinite. Set the Lyapunov rate to be equal to 
+$$ \dot{V}  = -\omega^T[P]\omega  $$
+where $[P]$ is a symmetric positive-definite matrix.    
 
 The rotational dynamics of the spacecraft are governed by Euler's equation    
-$$  
-[I]\dot{\omega}  
-=  
--\tilde{\omega}[I]\omega + u + L  
-$$
+$$  [I]\dot{\omega} =  -\tilde{\omega}[I]\omega + u + L  $$
 Here, $u$ is the control torque vector (3x1), $L$ is the external disturbance torque and $\tilde{\omega}$ is the skew symmetric matrix associated with $\omega$. In our case we assume that we do not have disturbances. Thus $L = 0$ 
 
-The attitude kinematics are described using Modified Rodrigues Parameters:    $$  
-\dot{\sigma}  
-=  
-B(\sigma)\omega  
-$$where $B(\sigma)$ is the MRP kinematic matrix. 
+The attitude kinematics are described using Modified Rodrigues Parameters: 
+$$ \dot{\sigma}  =  B(\sigma)\omega  $$
+where $B(\sigma)$ is the MRP kinematic matrix. 
 
 Substituting the equations of motion into the Lyapunov derivative gives:
-$$  
-\dot{V}  
-=  
-\omega^T  
-\left(  
--\tilde{\omega}[I]\omega  
-+  
-u  
-+  
-K\sigma  
-\right)  
-$$
-Using the property $\omega^T \tilde{\omega} = 0$ (since $\tilde{\omega}$ represents cross product, and a vector crossed with itself is 0), the gyroscopic term vanishes, leaving $$  
-\dot{V}  
-=  
-\omega^T(u + K\sigma)  
-$$But, $\dot{V} = -\omega^T[P]\omega$. Since $[P]$ is positive definite, the Lyapunov function is non-increasing along all system trajectories. This guarantees stable convergence of the angular velocity and attitude error to their desired equilibrium values.  
+$$  \dot{V}  =  \omega^T  \left(  -\tilde{\omega}[I]\omega  +  u  +  K\sigma  \right)  $$
+Using the property $\omega^T \tilde{\omega} = 0$ (since $\tilde{\omega}$ represents cross product, and a vector crossed with itself is 0), the gyroscopic term vanishes, leaving
+$$\dot{V}  =  \omega^T(u + K\sigma) $$
+But, $\dot{V} = -\omega^T[P]\omega$. Since $[P]$ is positive definite, the Lyapunov function is non-increasing along all system trajectories. This guarantees stable convergence of the angular velocity and attitude error to their desired equilibrium values.  
 
 Solving for $u$ with the above equations, we get: $u = -[P]\omega - K\sigma$ 
 Mathematically, we also get the control:  $u = -[P]\omega - K\sigma +\tilde{\omega}[I]\omega$
