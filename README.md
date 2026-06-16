@@ -30,37 +30,27 @@ For a system with state vector $x$, a Lyapunov function $V(x)$ can be chosen, su
 If these conditions are satisfied, then the system remains bounded and converges towards the equilibrium point. If the Lyapunov function is chosen well, then it continuously decrease with time until the system reaches the desired state.
 
 ### Application to the Spacecraft problem
-I have used Lyapunov functions in this case to guarantee stable attitude. A candidate Lyapunov function is constructed using the attitude error and the angular velocity terms. The control is then designed such that the derivative of the Lyapunov function (also called the Lyapunov rate) stays negative semidefinite, i.e., $$ \dot{V} (\omega, \sigma) \leq 0 ; \space \forall \sigma, \omega \neq 0 $$
-This ensures that the system continuously dissipates energy , and the error terms go to 0.
+I have used Lyapunov functions in this case to guarantee stable attitude. A candidate Lyapunov function is constructed using the attitude error and the angular velocity terms. The control is then designed such that the derivative of the Lyapunov function (also called the Lyapunov rate) stays negative semidefinite, i.e., $\dot{V} (\omega, \sigma) \leq 0 ; \space \forall \sigma, \omega \neq 0$ This ensures that the system continuously dissipates energy , and the error terms go to 0.
 
 For the Detumbling problem, the goal is to get $\omega \rightarrow 0$ and $\sigma \rightarrow 0$. here both $\sigma$ and $\omega$ represent the attitude and the rate between the Body and the Inertial frame respectively\
 For the attitude tracking, we consider R to be the frame whatever we want to track. Then $\omega_{B/R} \rightarrow 0$ and $\sigma_{B/R} \rightarrow 0$.
 
-The Lyapunov function for both of these is: 
-$$ V(\omega, \sigma) = \frac{1}{2}\omega^T [I] \omega + 2K ln (1 + 2 \sigma^T \sigma)$$
-here, $\omega$ and $\sigma$ and both 3x1 column vector, $[I]$ is the inertia tensor (symmetric) and K is a linear gain (for the feedback attitude control term)
+The Lyapunov function for both of these is: $V(\omega, \sigma) = \frac{1}{2}\omega^T [I] \omega + 2K ln (1 + 2 \sigma^T \sigma)$. here, $\omega$ and $\sigma$ and both 3x1 column vector, $[I]$ is the inertia tensor (symmetric) and K is a linear gain (for the feedback attitude control term)
 
 then taking the derivative of this, we get;
-$$\dot{V} (\omega, \sigma)  = \omega^T([I] \dot{\omega} + K\sigma) $$ for stable control, we want this to be semidefinite. Set the Lyapunov rate to be equal to 
-$$ \dot{V}  = -\omega^T[P]\omega  $$
-where $[P]$ is a symmetric positive-definite matrix.    
+$\dot{V} (\omega, \sigma)  = \omega^T([I] \dot{\omega} + K\sigma)$. for stable control, we want this to be semidefinite. Set the Lyapunov rate to be equal to 
+$\dot{V}  = -\omega^T[P]\omega$, where $[P]$ is a symmetric positive-definite matrix.    
 
 The rotational dynamics of the spacecraft are governed by Euler's equation    
-$$  [I]\dot{\omega} =  -\tilde{\omega}[I]\omega + u + L  $$
-Here, $u$ is the control torque vector (3x1), $L$ is the external disturbance torque and $\tilde{\omega}$ is the skew symmetric matrix associated with $\omega$. In our case we assume that we do not have disturbances. Thus $L = 0$ 
+$[I]\dot{\omega} =  -\tilde{\omega}[I]\omega + u + L$. Here, $u$ is the control torque vector (3x1), $L$ is the external disturbance torque and $\tilde{\omega}$ is the skew symmetric matrix associated with $\omega$. In our case we assume that we do not have disturbances. Thus $L = 0$ 
 
-The attitude kinematics are described using Modified Rodrigues Parameters: 
-$$ \dot{\sigma}  =  B(\sigma)\omega  $$
-where $B(\sigma)$ is the MRP kinematic matrix. 
+The attitude kinematics are described using Modified Rodrigues Parameters: $\dot{\sigma}  =  B(\sigma)\omega$, where $B(\sigma)$ is the MRP kinematic matrix. 
 
-Substituting the equations of motion into the Lyapunov derivative gives:
-$$  \dot{V}  =  \omega^T  \left(  -\tilde{\omega}[I]\omega  +  u  +  K\sigma  \right)  $$
-Using the property $\omega^T \tilde{\omega} = 0$ (since $\tilde{\omega}$ represents cross product, and a vector crossed with itself is 0), the gyroscopic term vanishes, leaving
+Substituting the equations of motion into the Lyapunov derivative gives: $\dot{V} = \omega^T(-\tilde{\omega}[I]\omega + u + K\sigma)$. Using the property $\omega^T \tilde{\omega} = 0$ (since $\tilde{\omega}$ represents cross product, and a vector crossed with itself is 0), the gyroscopic term vanishes, leaving
 $$\dot{V}  =  \omega^T(u + K\sigma) $$
 But, $\dot{V} = -\omega^T[P]\omega$. Since $[P]$ is positive definite, the Lyapunov function is non-increasing along all system trajectories. This guarantees stable convergence of the angular velocity and attitude error to their desired equilibrium values.  
 
-Solving for $u$ with the above equations, we get: $u = -[P]\omega - K\sigma$ 
-Mathematically, we also get the control:  $u = -[P]\omega - K\sigma +\tilde{\omega}[I]\omega$
+Solving for $u$ with the above equations, we get: $u = -[P]\omega - K\sigma$. Mathematically, we also get the control:  $u = -[P]\omega - K\sigma +\tilde{\omega}[I]\omega$
 
 Both of these will control the attitude and rates well, but the difference is in the internal closed loop dynamics. 
 
@@ -88,6 +78,6 @@ The current implementation assumes:
 - No disturbance torque
 
 ### Potential changes/improvements
-Adding CMG/Reaction wheel dynamics
-Actuator constraints
+Adding CMG/Reaction wheel dynamics,
+Actuator constraints,
 Sensor noise and state estimation
